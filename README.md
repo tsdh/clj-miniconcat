@@ -1,9 +1,13 @@
 # clj-miniconcat
 
 `clj-miniconcat` is a toy [concatenative language](http://concatenative.org)
-implemented in [Clojure](http://www.clojure.org/).
+implemented in [Clojure](http://www.clojure.org/).  What inspired me to toy
+around was
+[this excellent blog post by Jon Purdy](http://evincarofautumn.blogspot.com/2012/02/why-concatenative-programming-matters.html).
 
 ## Usage
+
+NOTE: These docs are totally incomplete!  I'll add some more anytime soon.
 
 The main entry point to running concatenative programs is the function
 `run-concat`.  It gets a concatenative program, runs it, and returns its
