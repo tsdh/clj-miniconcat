@@ -114,7 +114,8 @@ string, but not as a keyword (definition before use).
 
 ### Examples
 
-Define doubling and tripling words, and apply tripling.
+Define doubling and tripling words, and apply tripling on 3 followed by
+doubling the result.
 
 ```
 user> (run-concat
@@ -125,7 +126,10 @@ user> (run-concat
 18
 ```
 
-Of course, there's also the branching word `:if`.
+Of course, there's also the branching word `:if` which consumes the three
+top-most items from the stack: the condition, a then quotation, and an else
+quotation.  The clojure rule of truthiness applies: `false` and `nil` are
+falsy, everything else is truthy.
 
 ```
 user> (run-concat 2 :neg? ["Math is broken"] ["Math still works"] :if)
