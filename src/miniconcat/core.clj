@@ -1,4 +1,4 @@
-(ns concat.core)
+(ns miniconcat.core)
 
 ;;# Stack & Words
 
