@@ -10,7 +10,7 @@
 ;;# Utilities
 
 (defn push-stack! [& args]
-  (swap! *stack* into args))
+  (swap! *stack* into (reverse args)))
 
 (defn pop-stack! []
   (let [top (first @*stack*)]
@@ -93,8 +93,8 @@
 
 (register-word :define-word 3
                (fn [name argcount definition]
-                 (register-word name argcount
+                 (register-word (keyword name) argcount
                                 (fn [& args]
-                                  (apply push-stack! args)
-                                  (apply push-stack! definition)))))
+                                  (apply push-stack! definition)
+                                  (apply push-stack! args)))))
 

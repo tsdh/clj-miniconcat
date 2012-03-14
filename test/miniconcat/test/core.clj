@@ -17,7 +17,7 @@
   (println "#####################")
   (is (== 0 (run-concat 1 :dup :pos? [:dec] [:inc] :if))))
 
-#_(deftest test-fact
+(deftest test-fact
   (println "test-fact")
   (is (== 6 (run-concat
              :fact 1
