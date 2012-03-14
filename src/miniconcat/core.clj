@@ -72,7 +72,6 @@
 
 (defn substitute! []
   (loop [r []]
-    #_(println r "\t/" @*stack*)
     (let [x (pop-stack!)]
       (if (nil? x)
         (first r)

@@ -19,10 +19,12 @@
 
 (deftest test-fact
   (println "test-fact")
-  (is (== 6 (run-concat
-             :fact 1
-             [:dup :zero?
-              [:ignore 1]
-              [:dup :dec :fact :*] :if] :define-word
+  (is (== 2432902008176640000
+          (run-concat
+           'fact 1
+           [:dup
+            :zero?
+            [:ignore 1]
+            [:dup :dec :fact :*] :if] :define-word
 
-             3 :fact))))
+           20 :fact))))
