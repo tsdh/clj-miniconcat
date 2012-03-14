@@ -21,8 +21,14 @@
 
 (register-word :dup         1 #(push! %1 %1))
 (register-word :swap        2 #(push! %2 %1))
+(register-word :if          3 (fn [condition then else]
+                                (apply push! (if condition
+                                               then
+                                               else))))
+(register-word :ignore      1 (fn [e]))
 (register-word :print-top   0 #(println (first @*stack*)))
 (register-word :print-stack 0 #(println @*stack*))
+
 
 ;;# Defining words from clojure functions
 
@@ -41,6 +47,11 @@
  :-       2   -
  :*       2   *
  :div     2   /
+ :pos?    1   pos?
+ :zero?   1   zero?
+ :neg?    1   neg?
+ :inc     1   inc
+ :dec     1   dec
  :filter  2   filter
  :reduce  3   reduce
  :reduce1 3   reduce
@@ -70,7 +81,8 @@
 
 (defn run-concat [& args]
   (binding [*stack* (atom (list))]
-    (run-concat-1 args)))
+    (run-concat-1 args)
+    (first @*stack*)))
 
 ;;# Defining words in the concat language itself
 
