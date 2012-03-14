@@ -12,4 +12,17 @@
 
   (is (= "yay" (run-concat 1 :pos?   ["yay"] ["nay"] :if)))
   (is (= "nay" (run-concat 1 :neg?   ["yay"] ["nay"] :if)))
-  (is (= "nay" (run-concat 1 :zero?  ["yay"] ["nay"] :if))))
+  (is (= "nay" (run-concat 1 :zero?  ["yay"] ["nay"] :if)))
+
+  (println "#####################")
+  (is (== 0 (run-concat 1 :dup :pos? [:dec] [:inc] :if))))
+
+#_(deftest test-fact
+  (println "test-fact")
+  (is (== 6 (run-concat
+             :fact 1
+             [:dup :zero?
+              [:ignore 1]
+              [:dup :dec :fact :*] :if] :define-word
+
+             3 :fact))))

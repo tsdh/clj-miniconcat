@@ -9,8 +9,13 @@
 
 ;;# Utilities
 
-(defn push! [& args]
+(defn push-stack! [& args]
   (swap! *stack* into args))
+
+(defn pop-stack! []
+  (let [top (first @*stack*)]
+    (swap! *stack* next)
+    top))
 
 ;;# Registering words
 
@@ -19,12 +24,12 @@
 
 ;;# The core words
 
-(register-word :dup         1 #(push! %1 %1))
-(register-word :swap        2 #(push! %2 %1))
+(register-word :dup         1 #(push-stack! %1 %1))
+(register-word :swap        2 #(push-stack! %2 %1))
 (register-word :if          3 (fn [condition then else]
-                                (apply push! (if condition
-                                               then
-                                               else))))
+                                (apply push-stack! (if condition
+                                                     then
+                                                     else))))
 (register-word :ignore      1 (fn [e]))
 (register-word :print-top   0 #(println (first @*stack*)))
 (register-word :print-stack 0 #(println @*stack*))
@@ -36,7 +41,7 @@
   `(do
      (register-word ~word ~argcount
                     (fn [& args#]
-                      (push! (apply ~fn args#))))
+                      (push-stack! (apply ~fn args#))))
      ~(when (seq more)
         `(register-words-for-clj-fns
           ~(nth more 0) ~(nth more 1) ~(nth more 2)
@@ -61,28 +66,28 @@
 
 ;;# The runtime
 
-(defn- extract-args [n]
-  (let [[r s] ((juxt take drop) n @*stack*)]
-    (swap! *stack* (constantly s))
-    (reverse r)))
+(defn- extract-args [n v]
+  (let [idx (- (count v) n)]
+    [(subvec v idx) (subvec v 0 idx)]))
 
-(defn- concat-apply [a]
-  (if-let [spec (+words+ a)]
-    (apply (spec 1) (extract-args (spec 0)))
-    (push! a)))
-
-(defn- run-concat-1
-  ([args & words]
-     (run-concat-1 args)
-     (run-concat-1 words))
-  ([args]
-     (doseq [a args]
-       (concat-apply a))))
+(defn substitute! []
+  (loop [r []]
+    #_(println r "\t/" @*stack*)
+    (let [x (pop-stack!)]
+      (if (nil? x)
+        (first r)
+        (if-let [spec (+words+ x)]
+          (let [[args other] (extract-args (spec 0) r)]
+            (apply (spec 1) args)
+            (apply push-stack! other)
+            (recur []))
+          (if (keyword? x)
+            (throw (RuntimeException. (str "Undefined word `" x "`.")))
+            (recur (conj r x))))))))
 
 (defn run-concat [& args]
-  (binding [*stack* (atom (list))]
-    (run-concat-1 args)
-    (first @*stack*)))
+  (binding [*stack* (atom (apply list args))]
+    (substitute!)))
 
 ;;# Defining words in the concat language itself
 
@@ -90,4 +95,6 @@
                (fn [name argcount definition]
                  (register-word name argcount
                                 (fn [& args]
-                                  (apply run-concat-1 args definition)))))
+                                  (apply push-stack! args)
+                                  (apply push-stack! definition)))))
+
