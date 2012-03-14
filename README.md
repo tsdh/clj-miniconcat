@@ -19,7 +19,6 @@ example, this program substracts 10 from 2.
 user> (run-concat 2 10 :-)
 -8
 ```
-
 ### Getting Documentation
 
 You can list all available words with the function `list-words`.
@@ -59,6 +58,52 @@ Reduces with start value:
   (* 1 [2 3 4] :reduce ...) -> (24 ...)
 nil
 ```
+
+### Defining own words
+
+Using the function `register-word` you can define your own words.  It gets a
+word name, the argument count, the definition of the word as a clojure
+function, and a docstring.  For example, that's the definition of `:dup`.
+
+```
+(register-word :dup 1 #(push-stack! %1 %1)
+               "Duplicates the top item:\n  (x :dup ...) -> (x x ...)")
+```
+
+This is a pretty bare-bones function manipulating the stack directly.  It's
+mostly intended for implementing the basic words like `:dup`.
+
+There are two other approaches to defining your own words.
+
+1. You can integrate plain clojure functions as words using the macro
+`register-words-for-clj-fns` like so:
+
+```
+user> (register-words-for-clj-fns
+       :frozzle  3 *  "Frozzles the three top-most numbers."
+       :frozzle' 3 *' "Frozzles the three top-most numbers; promotes to bignums."
+       ;; more quadruples
+      )
+user> (run-concat 1 2 3 :frozzle)
+6
+```
+
+After that, `:frozzle` is a word that consumes the three top-most items from
+the stack, applies the clojure function `+` to them (i.e., adds them), and
+pushes the result back on the stack.
+
+2. You can define words in the language itself using the word `:define-word`.
+It consumes three items from the stack, namely the new word's name, its
+argument count, and its definition as a quotation (a vector).
+
+```
+user> (run-concat 'flubble 3 [:+ :+] :define-word  ;; define the new word :flubble
+       1 :dup 3 :flubble)                          ;; use the new word
+5
+```
+
+Note that the new word's name has to be specified either as symbol or as
+string, but not as a keyword (definition before use).
 
 ### Examples
 
