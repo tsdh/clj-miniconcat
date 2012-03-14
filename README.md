@@ -4,8 +4,21 @@
 implemented in [Clojure](http://www.clojure.org/).  What inspired me to toy
 around was
 [this excellent blog post by Jon Purdy](http://evincarofautumn.blogspot.com/2012/02/why-concatenative-programming-matters.html).
+The project uses [Leiningen](https://github.com/technomancy/leiningen) for
+dependency management, building, and test automation.
 
 ## Usage
+
+After cloning this repository, fire up a clojure REPL.
+
+```
+$ cd ~/path/to/clj-miniconcat
+$ lein repl
+user> (use 'miniconcat.core)
+nil
+```
+
+You are ready to go.
 
 The main entry point to running concatenative programs is the function
 `run-concat`.  It gets a concatenative program, runs it, and returns its
@@ -151,6 +164,32 @@ user=> (run-concat
         20 :fact)                               ;; calculate the factorial of 20
 2432902008176640000
 ```
+
+That version is pretty much the usual recursive definition of the faculty.  It
+will pop all integers from 20 to 0 onto the stack followed by a cascade of `:*`
+words, replace the 0 with a 1 (the termination criterion), and then start
+multiplying.  That's hammering the stack quite a bit, and as a result, it's
+about 40 times slower than the idiomatic clojure version `(reduce * (range 0
+21))`.
+
+But, hey, we can implement our factorial pretty similar.
+
+```
+user> (run-concat
+       'fact 1 [:inc 1 :swap :range2 * :swap :reduce1] :define-word
+       20 :fact)
+2432902008176640000
+```
+
+The `:range2` is just the clojure `range` function with start (including) and
+end (excluding, thus we `:inc`) value.  Since `:range2` wants its start value
+before the end value, we have to `:swap` the 2 top-most stack items.  Finally,
+we `:reduce1` the range using `*`, the plain clojure multiplication.
+`:reduce1` is `reduce` without start value.  Again we have to `:swap`, because
+`:reduce1` wants the reduction function and then the seq, not the other way
+round.  Note that we can use plain clojure functions as a kind of `quotation`.
+
+Now that version is only about factor 2 slower than the plain clojure version.
 
 ## License
 
