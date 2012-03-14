@@ -2,20 +2,20 @@
 
 ;;# Stack & Words
 
-(def ^{:dynamic true :private true}
+(def ^{:dynamic true :private true :tag java.util.Stack}
   *stack* nil)
 (def ^:private
   +words+ {})
 
 ;;# Utilities
 
-(defn push-stack! [& args]
-  (swap! *stack* into (reverse args)))
+(defn push-stack!
+  ([& args]
+     (doseq [a (reverse args)]
+       (.push *stack* a))))
 
 (defn pop-stack! []
-  (let [top (first @*stack*)]
-    (swap! *stack* next)
-    top))
+  (.pop *stack*))
 
 ;;# Registering words
 
@@ -82,9 +82,9 @@
 
 (defn substitute! []
   (loop [r []]
-    (let [x (pop-stack!)]
-      (if (nil? x)
-        (first r)
+    (if (.empty *stack*)
+      (first r)
+      (let [x (pop-stack!)]
         (if-let [spec (+words+ x)]
           (let [[args other] (extract-args (spec 0) r)]
             (apply (spec 1) args)
@@ -95,7 +95,8 @@
             (recur (conj r x))))))))
 
 (defn run-concat [& args]
-  (binding [*stack* (atom (apply list args))]
+  (binding [*stack* (java.util.Stack.)]
+    (apply push-stack! args)
     (substitute!)))
 
 ;;# Defining words in the concat language itself
@@ -105,7 +106,8 @@
                  (register-word (keyword name) argcount
                                 (fn [& args]
                                   (apply push-stack! definition)
-                                  (apply push-stack! args))))
+                                  (apply push-stack! args))
+                                "(dynamically defined word)"))
                "Defines a new word.")
 
 ;;# Documentation
