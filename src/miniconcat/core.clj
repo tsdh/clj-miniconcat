@@ -59,8 +59,11 @@
 
 (register-words-for-clj-fns
  :+       2   +       "Adds the two top-most numbers:\n  (1 2 :+ ...) -> (3 ...)"
+ :+'      2   +'      "Adds the two top-most numbers; promotes to bignums:\n  (1 2 :+' ...) -> (3 ...)"
  :-       2   -       "Substracts the two top-most numbers:\n  (1 2 :- ...) -> (-1 ...)"
+ :-'      2   -'      "Substracts the two top-most numbers; promotes to bignums:\n  (1 2 :-' ...) -> (-1 ...)"
  :*       2   *       "Multiplies the two top-most numbers:\n  (2 3 :* ...) -> (6 ...)"
+ :*'      2   *'      "Multiplies the two top-most numbers; promotes to bignums:\n  (2 3 :*' ...) -> (6 ...)"
  :div     2   /       "Divides the two top-most numbers:\n  (2 3 :div ...) -> (2/3 ...)"
  :pos?    1   pos?    "Tests if the top item is positive:\n  (1 :pos? ...) -> (true ...)"
  :zero?   1   zero?   "Tests if the top item is zero:\n  (0.0 :zero? ...) -> (true ...)"
