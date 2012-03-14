@@ -75,7 +75,12 @@ mostly intended for implementing the basic words like `:dup`.
 
 There are two other approaches to defining your own words.
 
-1. You can integrate plain clojure functions as words using the macro
+1. Integrating clojure functions
+2. Defining words in miniconcat itself
+
+#### Integrating clojure fns as words
+
+You can integrate plain clojure functions as words using the macro
 `register-words-for-clj-fns` like so:
 
 ```
@@ -92,9 +97,11 @@ After that, `:frozzle` is a word that consumes the three top-most items from
 the stack, applies the clojure function `+` to them (i.e., adds them), and
 pushes the result back on the stack.
 
-2. You can define words in the language itself using the word `:define-word`.
-It consumes three items from the stack, namely the new word's name, its
-argument count, and its definition as a quotation (a vector).
+#### Defining words in miniconcat itself
+
+You can define words in the language itself using the word `:define-word`.  It
+consumes three items from the stack, namely the new word's name, its argument
+count, and its definition as a quotation (a vector).
 
 ```
 user> (run-concat 'flubble 3 [:+ :+] :define-word  ;; define the new word :flubble
