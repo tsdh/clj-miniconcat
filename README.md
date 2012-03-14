@@ -114,18 +114,37 @@ string, but not as a keyword (definition before use).
 
 ### Examples
 
-As an example, this is a definition of the factorial function (defined in the
-miniconcat language itself) including its application on the number 20.
+Define doubling and tripling words, and apply tripling.
+
+```
+user> (run-concat
+       'double 1 [2 :*]            :define-word  ;; doubling is multiplying by 2
+       'triple 1 [:dup :double :+] :define-word  ;; tripling is doubling and adding once again
+
+       3 :triple :double)
+18
+```
+
+Of course, there's also the branching word `:if`.
+
+```
+user> (run-concat 2 :neg? ["Math is broken"] ["Math still works"] :if)
+"Math still works"
+```
+
+Combined with recursion, that's all you need for anything, I think.  So here's
+a definition of the factorial function including its application on the number
+20.
 
 ```
 user=> (run-concat
-         'fact 1                                 ;; name & argcount
-         [:dup                                   ;; definition
-          :zero?                                 ;; condition of :if
-          [:ignore 1]                            ;; then-branch
-          [:dup :dec :fact :*] :if] :define-word ;; else-branch, :if, and define the definition as new word :fact
+        'fact 1                                 ;; define the factorial as word
+        [:dup
+         :zero?
+         [:ignore 1]
+         [:dup :dec :fact :*] :if] :define-word
 
-         20 :fact)                               ;; calculate the factorial of 20
+        20 :fact)                               ;; calculate the factorial of 20
 2432902008176640000
 ```
 
