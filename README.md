@@ -187,7 +187,8 @@ before the end value, we have to `:swap` the 2 top-most stack items.  Finally,
 we `:reduce1` the range using `*`, the plain clojure multiplication.
 `:reduce1` is `reduce` without start value.  Again we have to `:swap`, because
 `:reduce1` wants the reduction function and then the seq, not the other way
-round.  Note that we can use plain clojure functions as a kind of `quotation`.
+round.  Note that we can use plain clojure functions like `*` as a kind of
+quotation.
 
 Now that version is only about factor 2 slower than the plain clojure version.
 
