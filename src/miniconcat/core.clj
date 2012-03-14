@@ -59,8 +59,8 @@
  :dec     1   dec
  :filter  2   filter
  :reduce  3   reduce
- :reduce1 3   reduce
- :map1    2   map
+ :reduce1 2   reduce
+ :map     2   map
  :map2    3   map
  :map3    4   map)
 
