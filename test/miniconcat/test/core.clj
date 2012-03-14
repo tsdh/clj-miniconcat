@@ -14,7 +14,6 @@
   (is (= "nay" (run-concat 1 :neg?   ["yay"] ["nay"] :if)))
   (is (= "nay" (run-concat 1 :zero?  ["yay"] ["nay"] :if)))
 
-  (println "#####################")
   (is (== 0 (run-concat 1 :dup :pos? [:dec] [:inc] :if))))
 
 (deftest test-fact
